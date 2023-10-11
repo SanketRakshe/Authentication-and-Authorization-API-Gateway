@@ -10,9 +10,10 @@ const apiRoutes = require('./routes');
 
 const app = express();
 
+
 const limiter = rateLimit({
 	windowMs: 2 * 60 * 1000, // 2 minutes
-	max: 6, // Limit each IP to 6 requests per `window` (here, per 15 minutes)
+	max: 30, // Limit each IP to 30 requests per `window` (here, per 15 minutes)
 });
 
 app.use(express.json());
@@ -25,6 +26,17 @@ app.use('/bookingService', createProxyMiddleware({ target: ServerConfig.BOOKING_
 
 app.use('/api', apiRoutes);  
 
-app.listen(ServerConfig.PORT , () => {
+app.listen(ServerConfig.PORT , async() => {
     console.log(`Successfully started a server on PORT : ${ServerConfig.PORT}`);
 });
+
+
+/**
+ * user
+ *  |
+ *  v
+ * localhost:3001 (API Gateway) localhost:4000/api/v1/bookings
+ *  |
+ *  v
+ * localhost:3000/api/v1/flights
+ */
